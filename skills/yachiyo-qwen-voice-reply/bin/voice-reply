@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+VENV_PY="/Users/doosam/.openclaw/workspace/.venv-qwen/bin/python"
+if [[ -x "$VENV_PY" ]]; then
+  "$VENV_PY" "$BASE_DIR/scripts/qwen_voice_reply.py" "$@"
+else
+  python3 "$BASE_DIR/scripts/qwen_voice_reply.py" "$@"
+fi
