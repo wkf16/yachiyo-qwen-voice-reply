@@ -143,13 +143,14 @@ def main() -> None:
         }
         print(json.dumps(manifest, ensure_ascii=False))
     else:
-        # Print path first so caller can send immediately
         print(str(out_ogg))
 
-    # Autoplay after outputting path (caller sends first, then we play locally)
+    # Autoplay: decode ogg to temp wav then play, non-blocking
     if args.autoplay:
-        subprocess.run(["pkill", "-x", "afplay"], capture_output=True)
-        subprocess.run(["afplay", "-q", "1", str(out_ogg)])
+        tmp_wav = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.wav"
+        subprocess.Popen(
+            ["sh", "-c", f"ffmpeg -v quiet -y -i '{out_ogg}' '{tmp_wav}' && afplay '{tmp_wav}' && rm -f '{tmp_wav}'"]
+        )
 
 
 if __name__ == "__main__":
