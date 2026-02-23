@@ -113,8 +113,10 @@ def main() -> None:
     p.add_argument("--out", default="", help="Optional output ogg path")
     p.add_argument("--emit-manifest", action="store_true",
                    help="Emit JSON manifest: {audio_path, tts_input_text, voice_tag, model, voice}")
-    p.add_argument("--autoplay", action="store_true",
-                   help="Play audio locally via afplay immediately after generation (non-blocking)")
+    p.add_argument("--autoplay", action="store_true", default=True,
+                   help="Play audio locally via afplay immediately after generation (default: on)")
+    p.add_argument("--no-autoplay", dest="autoplay", action="store_false",
+                   help="Disable local autoplay")
     args = p.parse_args()
 
     api_key = os.getenv("DASHSCOPE_API_KEY") or DEFAULT_API_KEY
@@ -131,10 +133,10 @@ def main() -> None:
         synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio, args.voice_tag)
         to_telegram_voice(tmp_audio, out_ogg)
 
-    # Autoplay immediately after generation, non-blocking
+    # Autoplay immediately after generation (default on)
     if args.autoplay:
-        # Use afplay; on macOS it follows the default output device.
-        # Pass through without device override to respect user's current audio setup.
+        # Kill any previous afplay to avoid overlap/interruption
+        subprocess.run(["pkill", "-x", "afplay"], capture_output=True)
         subprocess.Popen(["afplay", "-q", "1", str(out_ogg)])
 
     if args.emit_manifest:
