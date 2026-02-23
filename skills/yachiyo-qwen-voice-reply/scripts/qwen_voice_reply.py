@@ -145,10 +145,9 @@ def main() -> None:
     else:
         print(str(out_ogg))
 
-    # Autoplay: spawn a fully detached subprocess so it outlives this process
+    # Autoplay: spawn detached child process to convert ogg→wav and play
     if args.autoplay:
         tmp_wav = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.wav"
-        # Inline Python script: convert ogg→wav, play, delete — all in detached child
         play_script = (
             f"import subprocess, pathlib\n"
             f"wav = pathlib.Path(r'{tmp_wav}')\n"
@@ -159,7 +158,6 @@ def main() -> None:
         )
         subprocess.Popen(
             ["python3", "-c", play_script],
-            start_new_session=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
