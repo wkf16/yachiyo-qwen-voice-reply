@@ -133,7 +133,9 @@ def main() -> None:
 
     # Autoplay immediately after generation, non-blocking
     if args.autoplay:
-        subprocess.Popen(["afplay", str(out_ogg)])
+        # Use afplay; on macOS it follows the default output device.
+        # Pass through without device override to respect user's current audio setup.
+        subprocess.Popen(["afplay", "-q", "1", str(out_ogg)])
 
     if args.emit_manifest:
         manifest = {
