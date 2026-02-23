@@ -133,13 +133,6 @@ def main() -> None:
         synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio, args.voice_tag)
         to_telegram_voice(tmp_audio, out_ogg)
 
-    # Autoplay immediately after generation (default on)
-    if args.autoplay:
-        # Kill any previous afplay to avoid overlap
-        subprocess.run(["pkill", "-x", "afplay"], capture_output=True)
-        # Wait for playback to finish before returning, so caller doesn't interrupt
-        subprocess.run(["afplay", "-q", "1", str(out_ogg)])
-
     if args.emit_manifest:
         manifest = {
             "audio_path": str(out_ogg),
@@ -150,8 +143,13 @@ def main() -> None:
         }
         print(json.dumps(manifest, ensure_ascii=False))
     else:
-        # Always print plain path only, so caller controls exactly one send path.
+        # Print path first so caller can send immediately
         print(str(out_ogg))
+
+    # Autoplay after outputting path (caller sends first, then we play locally)
+    if args.autoplay:
+        subprocess.run(["pkill", "-x", "afplay"], capture_output=True)
+        subprocess.run(["afplay", "-q", "1", str(out_ogg)])
 
 
 if __name__ == "__main__":
