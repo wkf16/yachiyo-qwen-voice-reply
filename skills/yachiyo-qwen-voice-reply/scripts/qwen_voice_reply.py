@@ -145,11 +145,14 @@ def main() -> None:
     else:
         print(str(out_ogg))
 
-    # Autoplay: decode ogg to temp wav then play, non-blocking
+    # Autoplay: copy ogg to a separate temp file and play non-blocking
+    # so Telegram send and local playback never share the same file handle
     if args.autoplay:
-        tmp_wav = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.wav"
+        import shutil
+        play_copy = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.ogg"
+        shutil.copy2(str(out_ogg), str(play_copy))
         subprocess.Popen(
-            ["sh", "-c", f"ffmpeg -v quiet -y -i '{out_ogg}' '{tmp_wav}' && afplay '{tmp_wav}' && rm -f '{tmp_wav}'"]
+            ["sh", "-c", f"afplay '{play_copy}' && rm -f '{play_copy}'"]
         )
 
 
