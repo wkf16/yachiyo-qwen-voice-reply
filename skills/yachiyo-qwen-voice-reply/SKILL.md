@@ -34,9 +34,14 @@ metadata: {"openclaw":{"emoji":"🌙","requires":{"bins":["python3","ffmpeg"]}}}
 ## 用法
 
 ```bash
-# 只输出 ogg 路径（由上层 message 工具发送）
-{baseDir}/bin/voice-reply "要朗读的文本"
+# 必须传语音标签（jp|zh|en），只输出 ogg 路径（由上层 message 工具发送）
+{baseDir}/bin/voice-reply --voice-tag jp "要朗读的文本"
 ```
+
+语音标签说明：
+- `jp`：日语
+- `zh`：中文
+- `en`：英文
 
 ## 默认配置
 

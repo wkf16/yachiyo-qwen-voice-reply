@@ -6,12 +6,18 @@ import tempfile
 import time
 import urllib.request
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 DEFAULT_API_KEY = "DASHSCOPE_API_KEY_PLACEHOLDER"
 DEFAULT_MODEL = "qwen3-tts-vc-2026-01-22"
 DEFAULT_VOICE = "qwen-tts-vc-guanyu-voice-20260216143709994-f294"
 MIN_AUDIO_BYTES = 1024
+
+VOICE_TAG_MAP = {
+    "jp": ("Japanese", "自然で親しみやすい日本語で話してください。"),
+    "zh": ("Chinese", "自然で聞き取りやすい中国語で話してください。"),
+    "en": ("English", "Speak in clear and natural English."),
+}
 
 
 def ensure_dashscope():
@@ -51,16 +57,25 @@ def _download_with_validation(url: str, out_file: Path, retries: int = 3) -> Non
     raise RuntimeError(f"音频下载失败（重试 {retries} 次后仍失败）：{last_err}")
 
 
-def synthesize_to_audio_file(text: str, model: str, voice: str, api_key: str, out_audio: Path) -> None:
+def synthesize_to_audio_file(text: str, model: str, voice: str, api_key: str, out_audio: Path, voice_tag: str) -> None:
     dashscope = ensure_dashscope()
+    language_type, default_instruction = VOICE_TAG_MAP[voice_tag]
 
-    resp = dashscope.MultiModalConversation.call(
-        model=model,
-        api_key=api_key,
-        text=text,
-        voice=voice,
-        stream=False,
-    )
+    payload = {
+        "model": model,
+        "api_key": api_key,
+        "text": text,
+        "voice": voice,
+        "stream": False,
+        "language_type": language_type,
+    }
+
+    # qwen3-tts-instruct-flash supports stronger instruction control.
+    if "instruct" in model:
+        payload["instructions"] = default_instruction
+        payload["optimize_instructions"] = True
+
+    resp = dashscope.MultiModalConversation.call(**payload)
 
     url = _extract_audio_url(resp)
     if not url:
@@ -89,6 +104,8 @@ def to_telegram_voice(in_audio: Path, out_ogg: Path) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description="Generate Qwen voice reply and output MEDIA path")
     p.add_argument("text", help="Text to speak")
+    p.add_argument("--voice-tag", choices=sorted(VOICE_TAG_MAP.keys()), required=True,
+                   help="Required voice language tag: jp|zh|en")
     p.add_argument("--voice", default=DEFAULT_VOICE)
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--out", default="", help="Optional output ogg path")
@@ -105,7 +122,7 @@ def main() -> None:
         else:
             out_ogg = Path(tempfile.gettempdir()) / f"yachiyo-voice-{next(tempfile._get_candidate_names())}.ogg"
 
-        synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio)
+        synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio, args.voice_tag)
         to_telegram_voice(tmp_audio, out_ogg)
 
     # Always print plain path only, so caller controls exactly one send path.
