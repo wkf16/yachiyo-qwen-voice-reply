@@ -5,12 +5,13 @@
 
 ## 项目简介
 
-两个配套的 [OpenClaw](https://openclaw.ai) Agent Skills：
+三个配套的 [OpenClaw](https://openclaw.ai) Agent Skills：
 
 | Skill | 功能 |
 |---|---|
 | `yachiyo-qwen-voice-reply` | 使用 Qwen3-TTS 克隆音色生成 Telegram 语音回复，并在本地自动播放 |
 | `qwen3-tts-voice-clone` | 管理阿里云百炼声音复刻（创建 / 查询 / 删除克隆音色） |
+| `enable-voice-reply` | 开启语音讲解模式，注入强制语音回复指令，使 agent 在当前对话每条回复都附带语音 |
 
 ## 功能特性
 
@@ -19,12 +20,14 @@
 - 📱 **Telegram 集成**：ogg/opus 格式，caption 自动设为 TTS 输入文本
 - 🔊 **本地自动播放**：发送 Telegram 同时本地播放，互不阻塞
 - 🧹 **自动清理**：临时 wav 播完后自动删除
+- 💬 **语音讲解模式**：一句话开启，当前对话全程语音回复
 
 ## 安装
 
 ```bash
-cp -R yachiyo-qwen-voice-reply ~/.openclaw/workspace/skills/
-cp -R qwen3-tts-voice-clone ~/.openclaw/workspace/skills/
+cp -R skills/yachiyo-qwen-voice-reply ~/.openclaw/workspace/skills/
+cp -R skills/qwen3-tts-voice-clone ~/.openclaw/workspace/skills/
+cp -R skills/enable-voice-reply ~/.openclaw/workspace/skills/
 ```
 
 依赖：`python3`、`ffmpeg`、`pip install dashscope`
@@ -34,6 +37,8 @@ export DASHSCOPE_API_KEY="<your-api-key>"
 ```
 
 ## 使用
+
+### 语音回复
 
 ```bash
 # 日语语音回复（默认自动播放）
@@ -48,6 +53,21 @@ skills/yachiyo-qwen-voice-reply/bin/voice-reply --voice-tag jp --no-autoplay "�
 | `jp` | 日语 |
 | `zh` | 中文 |
 | `en` | 英文 |
+
+### 开启语音讲解模式
+
+在对话中说「开启语音讲解」即可触发 `enable-voice-reply` skill。
+
+触发后，agent 在当前对话的每条回复都会：
+1. 调用 `yachiyo-qwen-voice-reply` 生成语音
+2. 发送语音消息，caption 设为 TTS 输入文本本身（用户实际听到的内容）
+3. 可选附加一条精简文字补充
+
+说「关闭语音讲解」恢复普通文字回复。
+
+豁免条件（自动改为文字回复）：
+- 回复包含代码块、命令、JSON、配置文件、多行表格
+- 回复超过 8 句话或 300 字（中文）/ 200 词（英文）
 
 ## 工作流程
 
