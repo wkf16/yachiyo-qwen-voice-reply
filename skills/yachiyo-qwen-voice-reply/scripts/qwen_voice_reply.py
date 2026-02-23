@@ -145,18 +145,22 @@ def main() -> None:
     else:
         print(str(out_ogg))
 
-    # Autoplay: copy ogg to a separate temp file, play non-blocking,
-    # delete only after afplay finishes (via background thread)
+    # Autoplay: decode ogg→wav in background thread, play with afplay, delete wav after
     if args.autoplay:
-        import shutil, threading
-        play_copy = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.ogg"
-        shutil.copy2(str(out_ogg), str(play_copy))
+        import threading
+        ogg_path = str(out_ogg)
+        tmp_wav = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.wav"
 
-        def _play_and_cleanup(path: Path) -> None:
-            subprocess.run(["afplay", str(path)])
-            path.unlink(missing_ok=True)
+        def _decode_and_play(wav: Path) -> None:
+            ret = subprocess.run(
+                ["ffmpeg", "-v", "quiet", "-y", "-i", ogg_path, str(wav)],
+                capture_output=True
+            )
+            if ret.returncode == 0 and wav.exists():
+                subprocess.run(["afplay", str(wav)])
+            wav.unlink(missing_ok=True)
 
-        threading.Thread(target=_play_and_cleanup, args=(play_copy,), daemon=True).start()
+        threading.Thread(target=_decode_and_play, args=(tmp_wav,), daemon=True).start()
 
 
 if __name__ == "__main__":
