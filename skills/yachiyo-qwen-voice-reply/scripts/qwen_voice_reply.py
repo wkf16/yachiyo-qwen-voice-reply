@@ -113,6 +113,8 @@ def main() -> None:
     p.add_argument("--out", default="", help="Optional output ogg path")
     p.add_argument("--emit-manifest", action="store_true",
                    help="Emit JSON manifest: {audio_path, tts_input_text, voice_tag, model, voice}")
+    p.add_argument("--autoplay", action="store_true",
+                   help="Play audio locally via afplay immediately after generation (non-blocking)")
     args = p.parse_args()
 
     api_key = os.getenv("DASHSCOPE_API_KEY") or DEFAULT_API_KEY
@@ -128,6 +130,10 @@ def main() -> None:
 
         synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio, args.voice_tag)
         to_telegram_voice(tmp_audio, out_ogg)
+
+    # Autoplay immediately after generation, non-blocking
+    if args.autoplay:
+        subprocess.Popen(["afplay", str(out_ogg)])
 
     if args.emit_manifest:
         manifest = {
