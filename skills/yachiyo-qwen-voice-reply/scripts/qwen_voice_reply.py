@@ -92,7 +92,6 @@ def main() -> None:
     p.add_argument("--voice", default=DEFAULT_VOICE)
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--out", default="", help="Optional output ogg path")
-    p.add_argument("--telegram-tags", action="store_true", help="Print [[audio_as_voice]] + MEDIA:... (legacy mode)")
     args = p.parse_args()
 
     api_key = os.getenv("DASHSCOPE_API_KEY") or DEFAULT_API_KEY
@@ -109,12 +108,8 @@ def main() -> None:
         synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio)
         to_telegram_voice(tmp_audio, out_ogg)
 
-    if args.telegram_tags:
-        print("[[audio_as_voice]]")
-        print(f"MEDIA:{out_ogg}")
-    else:
-        # Default: print plain path only, so caller controls exactly one send path.
-        print(str(out_ogg))
+    # Always print plain path only, so caller controls exactly one send path.
+    print(str(out_ogg))
 
 
 if __name__ == "__main__":

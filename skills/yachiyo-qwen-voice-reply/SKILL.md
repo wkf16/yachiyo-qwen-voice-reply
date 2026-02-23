@@ -7,12 +7,7 @@ metadata: {"openclaw":{"emoji":"🌙","requires":{"bins":["python3","ffmpeg"]}}}
 # Yachiyo Qwen Voice Reply
 
 默认输出：
-- 仅输出本地 ogg 路径（例如 `/tmp/yachiyo-voice-xxx.ogg`），由调用方决定发送方式（推荐，避免重复发送）
-
-兼容旧模式（可选）：
-- `--telegram-tags` 时输出
-  - `[[audio_as_voice]]`
-  - `MEDIA:/path/file.ogg`
+- 仅输出本地 ogg 路径（例如 `/tmp/yachiyo-voice-xxx.ogg`），由调用方决定发送方式（用于避免重复发送）
 
 ## 触发机制（优化版）
 
@@ -39,11 +34,8 @@ metadata: {"openclaw":{"emoji":"🌙","requires":{"bins":["python3","ffmpeg"]}}}
 ## 用法
 
 ```bash
-# 推荐：只输出 ogg 路径（由上层 message 工具发送）
+# 只输出 ogg 路径（由上层 message 工具发送）
 {baseDir}/bin/voice-reply "要朗读的文本"
-
-# 兼容旧模式：输出 [[audio_as_voice]] + MEDIA
-{baseDir}/bin/voice-reply --telegram-tags "要朗读的文本"
 ```
 
 ## 默认配置
