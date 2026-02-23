@@ -57,4 +57,6 @@ metadata: {"openclaw":{"emoji":"🌙","requires":{"bins":["python3","ffmpeg"]}}}
 
 1. 先写好最终简短文本（1~3句最佳）。
 2. 调用 `bin/voice-reply` 生成语音。
-3. 发送语音：若使用 `--emit-manifest`，将 `caption/描述` 设置为 `tts_input_text`；如信息密度较高，再补一条精简文字要点。
+3. 发送语音时，**caption 必须设置为 TTS 输入文本**（即传给 voice-reply 的那段日语文本），不得为空或使用其他描述。
+   - 使用 `message(action=send, asVoice=true, media=<ogg路径>, caption=<TTS输入文本>)`
+   - 如信息密度较高，再补一条精简文字要点。
