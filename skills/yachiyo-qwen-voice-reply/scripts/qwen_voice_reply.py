@@ -11,7 +11,7 @@ from typing import Optional, Tuple
 
 DEFAULT_API_KEY = "DASHSCOPE_API_KEY_PLACEHOLDER"
 DEFAULT_MODEL = "qwen3-tts-vc-2026-01-22"
-DEFAULT_VOICE = "qwen-tts-vc-guanyu-voice-20260216143709994-f294"
+DEFAULT_VOICE = "qwen-tts-vc-yachiyo-voice-20260224022238839-5679"
 MIN_AUDIO_BYTES = 1024
 
 VOICE_TAG_MAP = {
@@ -24,6 +24,7 @@ VOICE_TAG_MAP = {
 def ensure_dashscope():
     try:
         import dashscope  # type: ignore
+        dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
         return dashscope
     except Exception as e:
         raise RuntimeError(
