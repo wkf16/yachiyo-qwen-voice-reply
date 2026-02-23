@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os
 import subprocess
 import tempfile
@@ -109,6 +110,8 @@ def main() -> None:
     p.add_argument("--voice", default=DEFAULT_VOICE)
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--out", default="", help="Optional output ogg path")
+    p.add_argument("--emit-manifest", action="store_true",
+                   help="Emit JSON manifest: {audio_path, tts_input_text, voice_tag, model, voice}")
     args = p.parse_args()
 
     api_key = os.getenv("DASHSCOPE_API_KEY") or DEFAULT_API_KEY
@@ -125,8 +128,18 @@ def main() -> None:
         synthesize_to_audio_file(args.text, args.model, args.voice, api_key, tmp_audio, args.voice_tag)
         to_telegram_voice(tmp_audio, out_ogg)
 
-    # Always print plain path only, so caller controls exactly one send path.
-    print(str(out_ogg))
+    if args.emit_manifest:
+        manifest = {
+            "audio_path": str(out_ogg),
+            "tts_input_text": args.text,
+            "voice_tag": args.voice_tag,
+            "model": args.model,
+            "voice": args.voice,
+        }
+        print(json.dumps(manifest, ensure_ascii=False))
+    else:
+        # Always print plain path only, so caller controls exactly one send path.
+        print(str(out_ogg))
 
 
 if __name__ == "__main__":
