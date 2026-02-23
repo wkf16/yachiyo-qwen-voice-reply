@@ -11,7 +11,7 @@
 |---|---|
 | `yachiyo-qwen-voice-reply` | 使用 Qwen3-TTS 克隆音色生成 Telegram 语音回复，并在本地自动播放 |
 | `qwen3-tts-voice-clone` | 管理阿里云百炼声音复刻（创建 / 查询 / 删除克隆音色） |
-| `enable-voice-reply` | 开启语音讲解模式，注入强制语音回复指令，使 agent 在当前对话每条回复都附带语音 |
+| `enable-voice-reply` | 开启语音回复模式，注入强制语音回复指令，使 agent 在当前对话每条回复都附带语音 |
 
 ## 功能特性
 
@@ -20,7 +20,7 @@
 - 📱 **Telegram 集成**：ogg/opus 格式，caption 自动设为 TTS 输入文本
 - 🔊 **本地自动播放**：发送 Telegram 同时本地播放，互不阻塞
 - 🧹 **自动清理**：临时 wav 播完后自动删除
-- 💬 **语音讲解模式**：一句话开启，当前对话全程语音回复
+- 💬 **语音回复模式**：一句话开启，当前对话全程语音回复
 
 ## 安装
 
@@ -54,7 +54,7 @@ skills/yachiyo-qwen-voice-reply/bin/voice-reply --voice-tag jp --no-autoplay "�
 | `zh` | 中文 |
 | `en` | 英文 |
 
-### 开启语音讲解模式
+### 开启语音回复模式
 
 在对话中说「开启语音讲解」即可触发 `enable-voice-reply` skill。
 
