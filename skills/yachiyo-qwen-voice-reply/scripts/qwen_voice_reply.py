@@ -145,15 +145,18 @@ def main() -> None:
     else:
         print(str(out_ogg))
 
-    # Autoplay: copy ogg to a separate temp file and play non-blocking
-    # so Telegram send and local playback never share the same file handle
+    # Autoplay: copy ogg to a separate temp file, play non-blocking,
+    # delete only after afplay finishes (via background thread)
     if args.autoplay:
-        import shutil
+        import shutil, threading
         play_copy = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.ogg"
         shutil.copy2(str(out_ogg), str(play_copy))
-        subprocess.Popen(
-            ["sh", "-c", f"afplay '{play_copy}' && rm -f '{play_copy}'"]
-        )
+
+        def _play_and_cleanup(path: Path) -> None:
+            subprocess.run(["afplay", str(path)])
+            path.unlink(missing_ok=True)
+
+        threading.Thread(target=_play_and_cleanup, args=(play_copy,), daemon=True).start()
 
 
 if __name__ == "__main__":
