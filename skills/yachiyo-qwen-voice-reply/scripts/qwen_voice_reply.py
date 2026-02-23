@@ -145,22 +145,24 @@ def main() -> None:
     else:
         print(str(out_ogg))
 
-    # Autoplay: decode ogg→wav in background thread, play with afplay, delete wav after
+    # Autoplay: spawn a fully detached subprocess so it outlives this process
     if args.autoplay:
-        import threading
-        ogg_path = str(out_ogg)
         tmp_wav = Path(tempfile.gettempdir()) / f"yachiyo-play-{next(tempfile._get_candidate_names())}.wav"
-
-        def _decode_and_play(wav: Path) -> None:
-            ret = subprocess.run(
-                ["ffmpeg", "-v", "quiet", "-y", "-i", ogg_path, str(wav)],
-                capture_output=True
-            )
-            if ret.returncode == 0 and wav.exists():
-                subprocess.run(["afplay", str(wav)])
-            wav.unlink(missing_ok=True)
-
-        threading.Thread(target=_decode_and_play, args=(tmp_wav,), daemon=True).start()
+        # Inline Python script: convert ogg→wav, play, delete — all in detached child
+        play_script = (
+            f"import subprocess, pathlib\n"
+            f"wav = pathlib.Path(r'{tmp_wav}')\n"
+            f"r = subprocess.run(['ffmpeg','-v','quiet','-y','-i',r'{out_ogg}',str(wav)], capture_output=True)\n"
+            f"if r.returncode == 0 and wav.exists():\n"
+            f"    subprocess.run(['afplay', str(wav)])\n"
+            f"wav.unlink(missing_ok=True)\n"
+        )
+        subprocess.Popen(
+            ["python3", "-c", play_script],
+            start_new_session=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
 
 
 if __name__ == "__main__":
