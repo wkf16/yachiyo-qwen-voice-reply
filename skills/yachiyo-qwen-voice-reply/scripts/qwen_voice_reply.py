@@ -135,9 +135,10 @@ def main() -> None:
 
     # Autoplay immediately after generation (default on)
     if args.autoplay:
-        # Kill any previous afplay to avoid overlap/interruption
+        # Kill any previous afplay to avoid overlap
         subprocess.run(["pkill", "-x", "afplay"], capture_output=True)
-        subprocess.Popen(["afplay", "-q", "1", str(out_ogg)])
+        # Wait for playback to finish before returning, so caller doesn't interrupt
+        subprocess.run(["afplay", "-q", "1", str(out_ogg)])
 
     if args.emit_manifest:
         manifest = {
