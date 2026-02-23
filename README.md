@@ -63,7 +63,7 @@ Qwen3-TTS 合成（国际区）→ ffmpeg 转码 ogg/opus
 
 ## 致谢
 
-本项目由 [wkf16](https://github.com/wkf16) 与 [sdyzjx](https://github.com/sdyzjx) 共同完成，AI 协作伙伴 ヤチヨ 全程参与开发。
+本项目由 [sdyzjx](https://github.com/sdyzjx) [wkf16](https://github.com/wkf16) 共同完成，AI 协作伙伴 ヤチヨ 全程参与开发。
 
 ## License
 
