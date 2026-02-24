@@ -22,12 +22,35 @@
 - 🧹 **自动清理**：临时 wav 播完后自动删除
 - 💬 **语音回复模式**：一句话开启，当前对话全程语音回复
 
-## 安装
+## 自动安装（推荐）
+
+使用一键安装脚本，适合通过 OpenClaw clawbot 引导安装：
+
+```bash
+git clone https://github.com/wkf16/yachiyo-qwen-voice-reply.git
+cd yachiyo-qwen-voice-reply
+chmod +x install.sh
+./install.sh
+```
+
+脚本会交互式引导完成以下步骤：
+
+1. **选择服务区域** — 国际区（新加坡）或中国区（北京），自动配置对应 API 端点
+2. **输入 API Key** — 若环境变量 `DASHSCOPE_API_KEY` 未设置，提示输入
+3. **连通性检测** — 验证所选区域的 API 端点是否可访问
+4. **安装 skills** — 将 `skills/` 下所有 skill 复制到 `~/.openclaw/workspace/skills/`，若已存在同名 skill 会询问是否覆盖
+
+> **clawbot 用法**：在 OpenClaw 对话中直接说「帮我安装 yachiyo voice skills」，agent 会自动 clone 仓库并运行 `install.sh`。
+
+---
+
+## 手动安装
 
 ```bash
 cp -R skills/yachiyo-qwen-voice-reply ~/.openclaw/workspace/skills/
 cp -R skills/qwen3-tts-voice-clone ~/.openclaw/workspace/skills/
 cp -R skills/enable-voice-reply ~/.openclaw/workspace/skills/
+cp -R skills/disable-voice-reply ~/.openclaw/workspace/skills/
 ```
 
 依赖：`python3`、`ffmpeg`、`pip install dashscope`
@@ -35,6 +58,9 @@ cp -R skills/enable-voice-reply ~/.openclaw/workspace/skills/
 ```bash
 export DASHSCOPE_API_KEY="<your-api-key>"
 ```
+
+> **区域说明**：默认使用国际区（新加坡）。若需切换至中国区（北京），将脚本中的
+> `dashscope-intl.aliyuncs.com` 替换为 `dashscope.aliyuncs.com`。
 
 ## 使用
 
