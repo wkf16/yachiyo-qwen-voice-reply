@@ -87,6 +87,10 @@ for skill_path in "$SKILLS_SRC"/*/; do
             "s|dashscope-intl\.aliyuncs\.com|dashscope.aliyuncs.com|g" {} \;
     fi
 
+    # 替换 SKILL.md 中的路径占位符为当前机器的实际路径
+    find "$dest" -name "SKILL.md" -exec sed -i '' \
+        "s|{{SKILLS_DIR}}|$SKILLS_DEST|g" {} \;
+
     echo "  ✓ $skill_name"
 done
 

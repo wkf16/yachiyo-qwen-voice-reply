@@ -14,7 +14,7 @@ description: 开启语音回复模式。当用户说"开启语音讲解"、"开�
 1. 写好最终文本（简洁口语化，≤4 句最佳）
 2. 调用语音生成：
    ```
-   /Users/okonfu/.openclaw/workspace/skills/yachiyo-qwen-voice-reply/bin/voice-reply --voice-tag jp "要朗读的日语文本"
+   {{SKILLS_DIR}}/yachiyo-qwen-voice-reply/bin/voice-reply --voice-tag jp "要朗读的日语文本"
    ```
 3. 发送语音，caption 必须设为传给 voice-reply 的那段文本：
    ```

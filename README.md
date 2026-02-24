@@ -39,8 +39,15 @@ chmod +x install.sh
 2. **输入 API Key** — 若环境变量 `DASHSCOPE_API_KEY` 未设置，提示输入
 3. **连通性检测** — 验证所选区域的 API 端点是否可访问
 4. **安装 skills** — 将 `skills/` 下所有 skill 复制到 `~/.openclaw/workspace/skills/`，若已存在同名 skill 会询问是否覆盖
+5. **路径修正** — 自动将 `enable-voice-reply/SKILL.md` 中的路径占位符替换为当前机器的实际 skills 路径
 
 > **clawbot 用法**：在 OpenClaw 对话中直接说「帮我安装 yachiyo voice skills」，agent 会自动 clone 仓库并运行 `install.sh`。
+>
+> 若手动复制 skills 而未运行脚本，需要让 clawbot 执行以下命令修正路径：
+> ```bash
+> sed -i '' "s|{{SKILLS_DIR}}|$HOME/.openclaw/workspace/skills|g" \
+>   ~/.openclaw/workspace/skills/enable-voice-reply/SKILL.md
+> ```
 
 ---
 
