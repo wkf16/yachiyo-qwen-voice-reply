@@ -3,6 +3,35 @@
 > 八千代 ヤチヨ (Yachiyo) — 动画《超时空辉夜姬》中的 AI 助手角色，以温柔、亲和的声音陪伴主角。  
 > 本项目将她的声音克隆并集成到 OpenClaw 智能助手中，让 AI 助手能以八千代的声音进行语音回复。
 
+## Agent 安装指引
+
+> 本节专为 OpenClaw clawbot 编写。如果你是 agent，请按以下步骤操作。
+
+**前置检查：**
+
+1. 确认用户已提供 `DASHSCOPE_API_KEY`，若未提供先向用户索取
+2. 询问用户选择服务区域：**国际区（新加坡）** 或 **中国区（北京）**
+
+**安装步骤（逐条执行）：**
+
+```
+# 1. clone 仓库
+exec: git clone https://github.com/wkf16/yachiyo-qwen-voice-reply.git /tmp/yachiyo-install
+
+# 2. 运行安装脚本（需要 pty=true 以支持交互提示）
+exec(pty=true): bash /tmp/yachiyo-install/install.sh
+```
+
+脚本会引导选择区域、验证 API 连通性、安装所有 skills，并自动将 `enable-voice-reply/SKILL.md` 中的路径占位符替换为当前机器的实际路径。
+
+**安装完成后清理：**
+
+```
+exec: rm -rf /tmp/yachiyo-install
+```
+
+---
+
 ## 项目简介
 
 三个配套的 [OpenClaw](https://openclaw.ai) Agent Skills：
