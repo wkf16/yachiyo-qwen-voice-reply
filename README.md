@@ -3,79 +3,11 @@
 > 八千代 ヤチヨ (Yachiyo) — 动画《超时空辉夜姬》中的 AI 助手角色，以温柔、亲和的声音陪伴主角。  
 > 本项目将她的声音克隆并集成到 OpenClaw 智能助手中，让 AI 助手能以八千代的声音进行语音回复。
 
-## Agent 安装指引
+## Install via OpenClaw agent
 
-> 本节专为 OpenClaw clawbot 编写。如果你是 agent，请逐步执行以下操作。
+Send this to your agent:
 
-**第一步：收集信息**
-
-向用户确认：
-
-1. **服务区域**：国际区（新加坡）还是中国区（北京）？
-2. **API Key**：检查环境变量 `DASHSCOPE_API_KEY` 是否已设置，未设置则向用户索取
-
-**第二步：检查 API 连通性**
-
-根据用户选择执行对应命令，若无法连接则告知用户并建议切换区域：
-
-```bash
-# 国际区（新加坡）
-curl -sf --max-time 8 https://dashscope-intl.aliyuncs.com -o /dev/null && echo "✓ 可访问" || echo "✗ 无法连接"
-
-# 中国区（北京）
-curl -sf --max-time 8 https://dashscope.aliyuncs.com -o /dev/null && echo "✓ 可访问" || echo "✗ 无法连接"
-```
-
-**第三步：clone 仓库**
-
-```bash
-git clone https://github.com/wkf16/yachiyo-qwen-voice-reply.git /tmp/yachiyo-install
-```
-
-**第四步：安装 skills**
-
-对以下每个 skill 逐一处理：`yachiyo-qwen-voice-reply`、`qwen3-tts-voice-clone`、`enable-voice-reply`、`disable-voice-reply`
-
-```bash
-# 检查是否已存在（以 yachiyo-qwen-voice-reply 为例）
-ls ~/.openclaw/workspace/skills/yachiyo-qwen-voice-reply 2>/dev/null && echo "已存在" || echo "不存在"
-```
-
-若已存在，询问用户是否覆盖，确认后再执行：
-
-```bash
-cp -R /tmp/yachiyo-install/skills/yachiyo-qwen-voice-reply ~/.openclaw/workspace/skills/
-cp -R /tmp/yachiyo-install/skills/qwen3-tts-voice-clone ~/.openclaw/workspace/skills/
-cp -R /tmp/yachiyo-install/skills/enable-voice-reply ~/.openclaw/workspace/skills/
-cp -R /tmp/yachiyo-install/skills/disable-voice-reply ~/.openclaw/workspace/skills/
-```
-
-**第五步：修正 enable-voice-reply 路径**
-
-将 SKILL.md 中的占位符替换为当前机器的实际路径：
-
-```bash
-sed -i '' "s|{{SKILLS_DIR}}|$HOME/.openclaw/workspace/skills|g" \
-  ~/.openclaw/workspace/skills/enable-voice-reply/SKILL.md
-```
-
-**第六步：若用户选择中国区，替换 API 端点**
-
-```bash
-find ~/.openclaw/workspace/skills/yachiyo-qwen-voice-reply -name "*.py" \
-  -exec sed -i '' "s|dashscope-intl\.aliyuncs\.com|dashscope.aliyuncs.com|g" {} \;
-```
-
-**第七步：清理并提示**
-
-```bash
-rm -rf /tmp/yachiyo-install
-```
-
-提示用户完成后续配置：
-- 将 `export DASHSCOPE_API_KEY="<key>"` 加入 `~/.zshrc` 或 `~/.bashrc`
-- 执行 `pip install dashscope`
-- 在对话中说「开启语音讲解」即可启用八千代语音回复
+> `Fetch https://raw.githubusercontent.com/wkf16/yachiyo-qwen-voice-reply/main/INSTALL_AGENT.md and follow the instructions to install yachiyo voice skills.`
 
 ---
 
